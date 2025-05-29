@@ -1,9 +1,9 @@
-package ru.yandex.buggyweatherapp.api
+package ru.yandex.buggyweatherapp.data.api
 
-import com.google.gson.JsonObject
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
+import ru.yandex.buggyweatherapp.data.dto.WeatherResponse
 
 interface WeatherApiService {
     
@@ -15,25 +15,25 @@ interface WeatherApiService {
     
     
     @GET("weather")
-    fun getCurrentWeather(
+    suspend fun getCurrentWeather(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
         @Query("appid") apiKey: String = API_KEY,
         @Query("units") units: String = "metric"
-    ): Call<JsonObject>
+    ): Response<WeatherResponse>
     
     @GET("weather")
-    fun getWeatherByCity(
+    suspend fun getWeatherByCity(
         @Query("q") cityName: String,
         @Query("appid") apiKey: String = API_KEY,
         @Query("units") units: String = "metric"
-    ): Call<JsonObject>
+    ): Response<WeatherResponse>
     
     @GET("forecast")
-    fun getForecast(
+    suspend fun getForecast(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
         @Query("appid") apiKey: String = API_KEY,
         @Query("units") units: String = "metric"
-    ): Call<JsonObject>
+    ): Response<WeatherResponse>
 }

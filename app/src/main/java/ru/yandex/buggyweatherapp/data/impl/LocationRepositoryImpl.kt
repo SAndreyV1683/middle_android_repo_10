@@ -1,4 +1,4 @@
-package ru.yandex.buggyweatherapp.repository
+package ru.yandex.buggyweatherapp.data.impl
 
 import android.content.Context
 import android.location.Geocoder
@@ -10,12 +10,11 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import ru.yandex.buggyweatherapp.model.Location
+import ru.yandex.buggyweatherapp.data.dto.Location
 import ru.yandex.buggyweatherapp.utils.LocationTracker
 import java.util.Locale
 
-class LocationRepository(
-    
+class LocationRepositoryImpl(
     private val context: Context
 ) {
     
@@ -75,12 +74,9 @@ class LocationRepository(
                         )
                         currentLocation = userLocation
                         callback(userLocation)
-                        
-                        
                     }
                 }
             }
-            
             
             fusedLocationClient.requestLocationUpdates(
                 locationRequest,

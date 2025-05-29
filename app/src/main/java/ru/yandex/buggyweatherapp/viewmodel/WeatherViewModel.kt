@@ -3,18 +3,18 @@ package ru.yandex.buggyweatherapp.viewmodel
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import ru.yandex.buggyweatherapp.WeatherApplication
-import ru.yandex.buggyweatherapp.model.Location
-import ru.yandex.buggyweatherapp.model.WeatherData
-import ru.yandex.buggyweatherapp.repository.LocationRepository
-import ru.yandex.buggyweatherapp.repository.WeatherRepository
+import ru.yandex.buggyweatherapp.data.dto.Location
+import ru.yandex.buggyweatherapp.domain.models.WeatherData
+import ru.yandex.buggyweatherapp.data.impl.LocationRepositoryImpl
+import ru.yandex.buggyweatherapp.data.impl.WeatherRepositoryImpl
+import ru.yandex.buggyweatherapp.domain.Resource
 import ru.yandex.buggyweatherapp.utils.ImageLoader
 import java.util.Timer
 import java.util.TimerTask
@@ -25,9 +25,9 @@ class WeatherViewModel : ViewModel() {
     private lateinit var activityContext: Context
     
     
-    private val weatherRepository = WeatherRepository()
+    private val weatherRepository = WeatherRepositoryImpl()
     private val locationRepository by lazy { 
-        LocationRepository(activityContext)
+        LocationRepositoryImpl(activityContext)
     }
     
     
@@ -76,19 +76,32 @@ class WeatherViewModel : ViewModel() {
     fun getWeatherForLocation(location: Location) {
         isLoading.value = true
         error.value = null
-        
-        weatherRepository.getWeatherData(location) { data, exception ->
-            
+        viewModelScope.launch {
+            val resource = weatherRepository.getWeatherData(location)
+            when (resource) {
+                is Resource.Success -> {
+                    resource.data?.let { data ->
+                        weatherData.value = data
+                    }
+                }
+
+                is Resource.Error -> {
+                    error.value = resource.message ?: "Unknown error"
+                }
+            }
+        }
+        /*weatherRepository.getWeatherData(location) { data, exception ->
+
             Handler(Looper.getMainLooper()).post {
                 isLoading.value = false
-                
+
                 if (data != null) {
                     weatherData.value = data
                 } else {
                     error.value = exception?.message ?: "Unknown error"
                 }
             }
-        }
+        }*/
     }
     
     fun searchWeatherByCity(city: String) {
@@ -99,12 +112,28 @@ class WeatherViewModel : ViewModel() {
         
         isLoading.value = true
         error.value = null
+
+        viewModelScope.launch {
+            val resource = weatherRepository.getWeatherByCity(city)
+            when (resource) {
+                is Resource.Success -> {
+                    resource.data?.let { data ->
+                        weatherData.value = data
+                        cityName.value = data.cityName
+                        currentLocation.value = Location(0.0, 0.0, data.cityName)
+                    }
+                }
+
+                is Resource.Error -> {
+                    error.value = resource.message ?: "Unknown error"
+                }
+            }
+        }
         
-        
-        weatherRepository.getWeatherByCity(city) { data, exception ->
-            
+        /*weatherRepository.getWeatherByCity(city) { data, exception ->
+
             isLoading.value = false
-            
+
             if (data != null) {
                 weatherData.value = data
                 cityName.value = data.cityName
@@ -112,7 +141,7 @@ class WeatherViewModel : ViewModel() {
             } else {
                 error.value = exception?.message ?: "Unknown error"
             }
-        }
+        }*/
     }
     
     
