@@ -5,15 +5,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
-import ru.yandex.buggyweatherapp.domain.api.WeatherRepository
+import ru.yandex.buggyweatherapp.location.domain.api.LocationRepository
+import ru.yandex.buggyweatherapp.weather.domain.api.WeatherRepository
 import ru.yandex.buggyweatherapp.presentation.WeatherViewModel
 
 @Module
 class ViewModelModule {
     @Provides
     fun provideRecordsViewModel(
-        weatherRepository: WeatherRepository
-    ): WeatherViewModel = WeatherViewModel(weatherRepository)
+        weatherRepository: WeatherRepository,
+        locationRepository: LocationRepository
+    ): WeatherViewModel = WeatherViewModel(weatherRepository, locationRepository)
 }
 
 @Suppress("UNCHECKED_CAST")

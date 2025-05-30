@@ -19,11 +19,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import ru.yandex.buggyweatherapp.data.impl.LocationRepositoryImpl
-import ru.yandex.buggyweatherapp.data.impl.WeatherRepositoryImpl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

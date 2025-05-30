@@ -8,68 +8,67 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import ru.yandex.buggyweatherapp.data.dto.Location
-import ru.yandex.buggyweatherapp.domain.models.WeatherData
-import ru.yandex.buggyweatherapp.data.impl.LocationRepositoryImpl
-import ru.yandex.buggyweatherapp.data.impl.WeatherRepositoryImpl
-import ru.yandex.buggyweatherapp.domain.Resource
-import ru.yandex.buggyweatherapp.domain.api.WeatherRepository
+import ru.yandex.buggyweatherapp.location.domain.api.LocationRepository
+import ru.yandex.buggyweatherapp.location.domain.models.Location
+import ru.yandex.buggyweatherapp.weather.domain.models.WeatherData
+import ru.yandex.buggyweatherapp.location.data.impl.LocationRepositoryImpl
+import ru.yandex.buggyweatherapp.weather.domain.Resource
+import ru.yandex.buggyweatherapp.weather.domain.api.WeatherRepository
 import ru.yandex.buggyweatherapp.utils.ImageLoader
 import java.util.Timer
 import java.util.TimerTask
 
 class WeatherViewModel(
-    private val weatherRepository: WeatherRepository
+    private val weatherRepository: WeatherRepository,
+    private val locationRepository: LocationRepository
 ) : ViewModel() {
-    
-    
-    private lateinit var activityContext: Context
-    
-    
-
-    private val locationRepository by lazy { 
-        LocationRepositoryImpl(activityContext)
-    }
-    
     
     val weatherData = MutableLiveData<WeatherData>()
     val currentLocation = MutableLiveData<Location>()
     val isLoading = MutableLiveData<Boolean>()
     val error = MutableLiveData<String>()
     val cityName = MutableLiveData<String>()
-    
-    
     private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
-    
-    
     private var refreshTimer: Timer? = null
-    
-    
-    fun initialize(context: Context) {
-        this.activityContext = context
+
+    init {
         fetchCurrentLocationWeather()
-        
-        
         startAutoRefresh()
     }
-    
     
     fun fetchCurrentLocationWeather() {
         isLoading.value = true
         error.value = null
-        
-        locationRepository.getCurrentLocation { location ->
-            if (location != null) {
-                currentLocation.value = location
-                
-                
-                val cityNameFromLocation = locationRepository.getCityNameFromLocation(location)
-                cityName.value = cityNameFromLocation
-                
-                getWeatherForLocation(location)
-            } else {
-                isLoading.value = false
-                error.value = "Unable to get current location"
+
+        viewModelScope.launch {
+            val resource = locationRepository.getCurrentLocation()
+            when(resource) {
+                is Resource.Success -> {
+                    val location = resource.data
+                    if (location != null) {
+                        currentLocation.value = location
+                        val cityNameResource = locationRepository.getCityNameFromLocation(location)
+                        when(cityNameResource) {
+                            is Resource.Success -> {
+                                val name = cityNameResource.data
+                                name?.let { cityName.value = it }
+                            }
+
+                            is Resource.Error -> {
+                                val error = cityNameResource.message
+                                error?.let { cityName.value = it }
+                            }
+                        }
+                        getWeatherForLocation(location)
+                    }
+                }
+
+                is Resource.Error -> {
+                    isLoading.value = false
+                    resource.message?.let {
+                        error.value = it
+                    }
+                }
             }
         }
     }
@@ -91,18 +90,6 @@ class WeatherViewModel(
                 }
             }
         }
-        /*weatherRepository.getWeatherData(location) { data, exception ->
-
-            Handler(Looper.getMainLooper()).post {
-                isLoading.value = false
-
-                if (data != null) {
-                    weatherData.value = data
-                } else {
-                    error.value = exception?.message ?: "Unknown error"
-                }
-            }
-        }*/
     }
     
     fun searchWeatherByCity(city: String) {
@@ -130,19 +117,6 @@ class WeatherViewModel(
                 }
             }
         }
-        
-        /*weatherRepository.getWeatherByCity(city) { data, exception ->
-
-            isLoading.value = false
-
-            if (data != null) {
-                weatherData.value = data
-                cityName.value = data.cityName
-                currentLocation.value = Location(0.0, 0.0, data.cityName)
-            } else {
-                error.value = exception?.message ?: "Unknown error"
-            }
-        }*/
     }
     
     
@@ -176,10 +150,5 @@ class WeatherViewModel(
             it.isFavorite = !it.isFavorite
             weatherData.value = it
         }
-    }
-    
-    override fun onCleared() {
-        super.onCleared()
-        
     }
 }

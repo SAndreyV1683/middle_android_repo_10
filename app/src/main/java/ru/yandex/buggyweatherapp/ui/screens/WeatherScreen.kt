@@ -35,26 +35,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import ru.yandex.buggyweatherapp.domain.models.WeatherData
+import ru.yandex.buggyweatherapp.weather.domain.models.WeatherData
 import ru.yandex.buggyweatherapp.utils.WeatherIconMapper
 import ru.yandex.buggyweatherapp.presentation.WeatherViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherScreen(viewModel: WeatherViewModel, modifier: Modifier = Modifier) {
-    
-    val context = LocalContext.current
-    
-    
-    DisposableEffect(Unit) {
-        
-        viewModel.initialize(context)
-        
-        onDispose {
-            
-        }
-    }
-    
     
     val weatherData by viewModel.weatherData.observeAsState()
     val isLoading by viewModel.isLoading.observeAsState(false)

@@ -30,13 +30,13 @@ class LocationTracker private constructor(
     private val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     
     
-    private val listeners = CopyOnWriteArrayList<(ru.yandex.buggyweatherapp.data.dto.Location) -> Unit>()
+    private val listeners = CopyOnWriteArrayList<(ru.yandex.buggyweatherapp.location.domain.models.Location) -> Unit>()
     
     
     private val locationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
             
-            val newLocation = ru.yandex.buggyweatherapp.data.dto.Location(
+            val newLocation = ru.yandex.buggyweatherapp.location.domain.models.Location(
                 latitude = location.latitude,
                 longitude = location.longitude
             )
@@ -73,11 +73,11 @@ class LocationTracker private constructor(
     }
     
     
-    fun addListener(listener: (ru.yandex.buggyweatherapp.data.dto.Location) -> Unit) {
+    fun addListener(listener: (ru.yandex.buggyweatherapp.location.domain.models.Location) -> Unit) {
         listeners.add(listener)
     }
     
-    private fun notifyListeners(location: ru.yandex.buggyweatherapp.data.dto.Location) {
+    private fun notifyListeners(location: ru.yandex.buggyweatherapp.location.domain.models.Location) {
         
         Handler(Looper.getMainLooper()).post {
             for (listener in listeners) {
