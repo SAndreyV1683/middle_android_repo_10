@@ -37,7 +37,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import ru.yandex.buggyweatherapp.domain.models.WeatherData
 import ru.yandex.buggyweatherapp.utils.WeatherIconMapper
-import ru.yandex.buggyweatherapp.viewmodel.WeatherViewModel
+import ru.yandex.buggyweatherapp.presentation.WeatherViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,46 +1,33 @@
 package ru.yandex.buggyweatherapp.data.impl
 
 import com.google.gson.JsonObject
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import ru.yandex.buggyweatherapp.BuildConfig
-import ru.yandex.buggyweatherapp.data.api.WeatherApiService
+import ru.yandex.buggyweatherapp.data.api.NetworkClient
 import ru.yandex.buggyweatherapp.data.converters.WeatherDataConverter
-import ru.yandex.buggyweatherapp.domain.Resource
 import ru.yandex.buggyweatherapp.data.dto.Location
-import ru.yandex.buggyweatherapp.data.response.WeatherDataResponse
-import ru.yandex.buggyweatherapp.domain.models.WeatherData
 import ru.yandex.buggyweatherapp.data.request.Request
+import ru.yandex.buggyweatherapp.data.response.WeatherDataResponse
+import ru.yandex.buggyweatherapp.domain.Resource
+import ru.yandex.buggyweatherapp.domain.api.WeatherRepository
+import ru.yandex.buggyweatherapp.domain.models.WeatherData
+import javax.inject.Inject
 
-class WeatherRepositoryImpl() {
-    val client = OkHttpClient.Builder().addInterceptor(
-        HttpLoggingInterceptor().apply {
-            setLevel(HttpLoggingInterceptor.Level.BODY)
-        }
-    ).build()
-    val retrofit: Retrofit = Retrofit.Builder()
-        .client(client)
-        .baseUrl(BuildConfig.BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+class WeatherRepositoryImpl @Inject constructor(
+    private val networkClient: NetworkClient,
+    private val converter: WeatherDataConverter,
+    private val ioDispatcher: CoroutineDispatcher
+): WeatherRepository {
 
-    private val weatherApi = retrofit.create(WeatherApiService::class.java)
-    private var cachedWeatherData: WeatherData? = null
-    private val converter = WeatherDataConverter()
-    private val networkClient = NetworkClientImpl(weatherApi)
-
-    suspend fun getWeatherData(location: Location): Resource<WeatherData> {
-        return withContext(Dispatchers.IO) {
+    override suspend fun getWeatherData(location: Location): Resource<WeatherData> {
+        return withContext(ioDispatcher) {
             val response = networkClient.doRequest(
                 Request.WeatherByLocation(
                     latitude = location.latitude,
                     longitude = location.longitude,
                     apikey = BuildConfig.API_KEY,
-                    units = "metric"
+                    units = UNITS
                 )
             )
 
@@ -60,13 +47,13 @@ class WeatherRepositoryImpl() {
         }
     }
 
-    suspend fun getWeatherByCity(cityName: String): Resource<WeatherData> {
-        return withContext(Dispatchers.IO) {
+    override suspend fun getWeatherByCity(cityName: String): Resource<WeatherData> {
+        return withContext(ioDispatcher) {
             val response = networkClient.doRequest(
                 Request.WeatherByCity(
                     cityName = cityName,
                     apikey = BuildConfig.API_KEY,
-                    units = "metric"
+                    units = UNITS
                 )
             )
 
@@ -126,5 +113,9 @@ class WeatherRepositoryImpl() {
         val name = json.get("name").asString
 
         return Location(lat, lon, name)
+    }
+
+    companion object {
+        const val UNITS = "metric"
     }
 }

@@ -2,8 +2,9 @@ package ru.yandex.buggyweatherapp.data.converters
 
 import ru.yandex.buggyweatherapp.data.dto.WeatherResponse
 import ru.yandex.buggyweatherapp.domain.models.WeatherData
+import javax.inject.Inject
 
-class WeatherDataConverter {
+class WeatherDataConverter @Inject constructor () {
     fun convertWeatherDataDto(dataDto: WeatherResponse): WeatherData {
         return WeatherData(
             cityName = dataDto.name,

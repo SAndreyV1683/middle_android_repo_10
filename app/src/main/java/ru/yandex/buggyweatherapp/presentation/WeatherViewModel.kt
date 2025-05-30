@@ -1,8 +1,6 @@
-package ru.yandex.buggyweatherapp.viewmodel
+package ru.yandex.buggyweatherapp.presentation
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,17 +13,20 @@ import ru.yandex.buggyweatherapp.domain.models.WeatherData
 import ru.yandex.buggyweatherapp.data.impl.LocationRepositoryImpl
 import ru.yandex.buggyweatherapp.data.impl.WeatherRepositoryImpl
 import ru.yandex.buggyweatherapp.domain.Resource
+import ru.yandex.buggyweatherapp.domain.api.WeatherRepository
 import ru.yandex.buggyweatherapp.utils.ImageLoader
 import java.util.Timer
 import java.util.TimerTask
 
-class WeatherViewModel : ViewModel() {
+class WeatherViewModel(
+    private val weatherRepository: WeatherRepository
+) : ViewModel() {
     
     
     private lateinit var activityContext: Context
     
     
-    private val weatherRepository = WeatherRepositoryImpl()
+
     private val locationRepository by lazy { 
         LocationRepositoryImpl(activityContext)
     }
@@ -173,11 +174,9 @@ class WeatherViewModel : ViewModel() {
     fun toggleFavorite() {
         weatherData.value?.let {
             it.isFavorite = !it.isFavorite
-            
             weatherData.value = it
         }
     }
-    
     
     override fun onCleared() {
         super.onCleared()

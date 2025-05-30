@@ -1,13 +1,13 @@
 package ru.yandex.buggyweatherapp.data.impl
 
-import android.util.Log
 import ru.yandex.buggyweatherapp.data.api.NetworkClient
 import ru.yandex.buggyweatherapp.data.api.WeatherApiService
-import ru.yandex.buggyweatherapp.data.response.WeatherDataResponse
 import ru.yandex.buggyweatherapp.data.request.Request
 import ru.yandex.buggyweatherapp.data.response.Response
+import ru.yandex.buggyweatherapp.data.response.WeatherDataResponse
+import javax.inject.Inject
 
-class NetworkClientImpl(
+class NetworkClientImpl @Inject constructor(
     val apiService: WeatherApiService,
 ) : NetworkClient {
 

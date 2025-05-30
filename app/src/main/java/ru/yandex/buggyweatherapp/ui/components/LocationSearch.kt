@@ -65,6 +65,7 @@ fun LocationSearch(
     }
 }
 
+/*
 @Composable
 fun LocationSearchWithDirectApiCall() {
     val context = LocalContext.current
@@ -92,4 +93,4 @@ fun LocationSearchWithDirectApiCall() {
             }
         }
     )
-}
+}*/
