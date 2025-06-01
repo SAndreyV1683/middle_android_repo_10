@@ -27,7 +27,7 @@ class NetworkClientImpl @Inject constructor(
                     } else {
                         Response().apply {
                             resultCode = result.code()
-                            errorMessage = result.errorBody()?.string().toString()
+                            errorMessage = result.message()
                         }
                     }
                 }
@@ -45,7 +45,7 @@ class NetworkClientImpl @Inject constructor(
                         result.errorBody()?.string()
                         Response().apply {
                             resultCode = result.code()
-                            errorMessage = result.errorBody()?.string().toString()
+                            errorMessage = result.message()
                         }
                     }
                 }

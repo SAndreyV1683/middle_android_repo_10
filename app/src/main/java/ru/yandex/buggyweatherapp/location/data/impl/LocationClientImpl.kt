@@ -76,7 +76,9 @@ class LocationClientImpl @Inject constructor(
                     }
                     .addOnFailureListener { e ->
                         Log.e("LocationRepository", "Error getting location", e)
-                        LocationResult.Error(e.message.toString())
+                        trySend(
+                            LocationResult.Error(e.message.toString())
+                        )
                     }
             } catch (e: SecurityException) {
                 LocationResult.Error(e.message.toString())
