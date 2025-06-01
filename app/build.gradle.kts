@@ -43,11 +43,11 @@ android {
     buildTypes {
         release {
             buildConfigField("String", "API_KEY", "\"8fd9a0f2216e2bc16a09102e2af8ab1d\"")
-            buildConfigField("String", "BASE_URL", "\"http://api.openweathermap.org/data/2.5/\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.openweathermap.org/data/2.5/\"")
         }
         debug {
             buildConfigField("String", "API_KEY", "\"8fd9a0f2216e2bc16a09102e2af8ab1d\"")
-            buildConfigField("String", "BASE_URL", "\"http://api.openweathermap.org/data/2.5/\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.openweathermap.org/data/2.5/\"")
         }
     }
 }
