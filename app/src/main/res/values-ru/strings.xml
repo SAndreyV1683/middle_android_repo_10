@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Buggy Weather App</string>
+    <string name="search_city">Поиск по городу</string>
+    <string name="current_location">Текущее местоположение</string>
+    <string name="loading">Обновление данных о погоде…</string>
+    <string name="refresh">Обновить</string>
+    <string name="temperature">Температура: %1$d°C</string>
+    <string name="feels_like">Ощущается как</string>
+    <string name="humidity">Влажность: %1$d%%</string>
+    <string name="wind">Ветер: %1$.1f м/с</string>
+    <string name="description">Описание: %1$s</string>
+    <string name="no_location_permission">Для получения текущей информации о погоде требуется разрешение на определение местоположения</string>
+    <string name="location_error">Не удается получить текущее местоположение</string>
+    <string name="network_error">Ошибка сети. Пожалуйста, проверьте подключение</string>
+    <string name="min_max_temp">Мин/Макс: %1$d°C / %2$d°C</string>
+    <string name="pressure">Давление: %1$d гПа</string>
+    <string name="sunrise">Восход: %1$s</string>
+    <string name="sunset">Закат: %1$s</string>
+</resources>

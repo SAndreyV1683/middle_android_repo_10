@@ -19,12 +19,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import ru.yandex.buggyweatherapp.api.RetrofitInstance
-import ru.yandex.buggyweatherapp.repository.LocationRepository
-import ru.yandex.buggyweatherapp.repository.WeatherRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,14 +62,15 @@ fun LocationSearch(
     }
 }
 
+/*
 @Composable
 fun LocationSearchWithDirectApiCall() {
     val context = LocalContext.current
     var searchText by remember { mutableStateOf("") }
     
     
-    val weatherRepository = WeatherRepository()
-    val locationRepository = LocationRepository(context)
+    val weatherRepository = WeatherRepositoryImpl()
+    val locationRepository = LocationRepositoryImpl(context)
     
     OutlinedTextField(
         value = searchText,
@@ -86,11 +83,11 @@ fun LocationSearchWithDirectApiCall() {
             IconButton(onClick = { 
                 if (searchText.isNotBlank()) {
                     
-                    weatherRepository.getWeatherByCity(searchText) { weatherData, error -> }
+                    //weatherRepository.getWeatherByCity(searchText) { weatherData, error -> }
                 }
             }) {
                 Icon(Icons.Default.Search, contentDescription = "Search")
             }
         }
     )
-}
+}*/
